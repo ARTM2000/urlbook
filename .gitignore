@@ -1,0 +1,9 @@
+tmp
+build
+**/_
+
+.DS_Store
+.idea
+**/*.local
+**/*.env
+!**/*.env.*
