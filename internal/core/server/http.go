@@ -4,7 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"time"
 
+	"github.com/artm2000/urlbook/internal/controller"
+	"github.com/artm2000/urlbook/internal/infra/config"
 	urlbookpkg "github.com/artm2000/urlbook/pkg"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/helmet"
@@ -13,22 +16,25 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/requestid"
 )
 
-type Config struct {
-	Host string
-	Port string
+type HttpServer interface {
+	Start()
+	Stop(bool)
+	RegisterControllers(...controller.HttpController)
 }
 
-type API struct{}
-
-func (api *API) healthStatus(c *fiber.Ctx) error {
-	return c.JSON(urlbookpkg.FormatResponse(c, urlbookpkg.Data{
-		Data: map[string]interface{}{
-			"server_status": "fine",
-		},
-	}))
+type httpServer struct {
+	config config.HttpServer
+	app    *fiber.App
 }
 
-func Run(config Config) func() {
+func NewHttpServer(config config.HttpServer) HttpServer {
+	return &httpServer{
+		config: config,
+		app: nil,
+	}
+}
+
+func (hs *httpServer) Start() {
 	app := fiber.New(fiber.Config{
 		DisableStartupMessage: true,
 		// ReduceMemoryUsage: true,
@@ -72,10 +78,6 @@ func Run(config Config) func() {
 	}))
 	app.Use(helmet.New())
 
-	api := API{}
-
-	app.Get("/v1/health", api.healthStatus)
-
 	app.Hooks().OnListen(func(ld fiber.ListenData) error {
 		if fiber.IsChild() {
 			return nil
@@ -89,12 +91,30 @@ func Run(config Config) func() {
 	})
 
 	go func() {
-		if err := app.Listen(fmt.Sprintf("%s:%s", config.Host, config.Port)); err != nil {
+		if err := app.Listen(fmt.Sprintf("%s:%s", hs.config.Host, hs.config.Port)); err != nil {
 			slog.Error(err.Error())
 		}
 	}()
 
-	return func() {
-		app.Shutdown()
+	hs.app = app
+}
+
+func (hs *httpServer) Stop(force bool) {
+	if hs.app == nil {
+		panic("http app server not defined. first start the http server")
+	}
+	if force {
+		hs.app.Shutdown()
+		return
+	}
+	hs.app.ShutdownWithTimeout(time.Second * 30)
+}
+
+func (hs *httpServer) RegisterControllers(controllers ...controller.HttpController) {
+	if hs.app == nil {
+		panic("http app server not defined. first start the http server")
+	}
+	for _, c := range controllers {
+		c.InitRoutes(hs.app.Group(c.GetPrefix()))
 	}
 }

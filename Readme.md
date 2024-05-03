@@ -21,6 +21,13 @@ __URLBook__ is a sample project of URL-shortener platform with focus on backend 
     <img src='docs/design.png' alt='high-level-system-design' />
 </div>
 
+## Project architecture
+As considered, _Hexagonal Architecture_ selected for project structure to make the project flexible and isolated its parts.
+
+Here are some links about the architecture:
+ - https://medium.com/@pthtantai97/hexagonal-architecture-with-golang-part-1-7f82a364b29 
+ - https://medium.com/@pthtantai97/hexagonal-architecture-with-golang-part-2-681ee2a0d780
+
 ## Todo
 - [x] Create project system design
 - [ ] Setup required services with docker-compose

@@ -1,4 +1,4 @@
-package utils
+package common
 
 import (
 	"log/slog"
@@ -6,7 +6,7 @@ import (
 )
 
 func NewLogger(logLevel slog.Level) *slog.Logger {
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
 		AddSource: true,
 		Level:     logLevel,
 	}))

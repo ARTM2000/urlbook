@@ -1,0 +1,1 @@
+This directory is a fundamental part of the Hexagonal architecture as it contains the internal code of the application, separated into different packages.

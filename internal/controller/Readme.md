@@ -1,0 +1,1 @@
+This package contains files responsible for handling HTTP requests and calling the appropriate core logic. For example, the “controller.go” file could define functions for handling different HTTP endpoints. It is a primary/driver adapter
