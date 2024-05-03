@@ -5,3 +5,6 @@ dev_server:
 
 format:
 	@gofmt -l -s -w . && go mod tidy
+
+prepare:
+	@./scripts/prepare.bash
