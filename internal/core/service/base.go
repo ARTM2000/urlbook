@@ -8,20 +8,20 @@ import (
 
 func createSuccessResponse[T any](data *T, trackId string) *response.Response[T] {
 	return &response.Response[T]{
-		Error: false,
-		Message: "",
+		Error:      false,
+		Message:    "",
 		StatusCode: code.SUCCESS,
-		Data: data,
-		TrackId: trackId,
+		Data:       data,
+		TrackId:    trackId,
 	}
 }
 
 func createFailResponse[T any](message message.Message, trackId string, statusCode int) *response.Response[T] {
 	return &response.Response[T]{
-		Error: true,
-		Message: message,
+		Error:      true,
+		Message:    message,
 		StatusCode: statusCode,
-		Data: nil,
-		TrackId: trackId,
+		Data:       nil,
+		TrackId:    trackId,
 	}
 }

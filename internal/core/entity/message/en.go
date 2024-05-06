@@ -4,7 +4,7 @@ type Message string
 
 const (
 	INTERNAL_SYSTEM_ERROR Message = "internal system error"
-	INVALID_URL Message = "invalid url"
+	INVALID_URL           Message = "invalid url"
 )
 
 const (

@@ -30,7 +30,7 @@ type httpServer struct {
 func NewHttpServer(config config.HttpServer) HttpServer {
 	return &httpServer{
 		config: config,
-		app: nil,
+		app:    nil,
 	}
 }
 

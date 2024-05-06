@@ -3,7 +3,7 @@ package dto
 import "time"
 
 type URL struct {
-	ShortPhrase  string;
-	Destination  string;
-	CreatedAt    time.Time;
+	ShortPhrase string
+	Destination string
+	CreatedAt   time.Time
 }

@@ -16,7 +16,7 @@ import (
 )
 
 type urlShortener struct {
-	urlRepo repository.Url
+	urlRepo      repository.Url
 	baseShortUrl string
 }
 
@@ -38,24 +38,24 @@ func (ush *urlShortener) ShortUrl(request *request.SubmitUrl) *response.Response
 
 	err := ush.urlRepo.Insert(&urlDto)
 	if err != nil {
-		if errors.Is(err, repository.DUPLICATE_URL_PHRASE) {
+		if errors.Is(err, repository.ErrDuplicateUrlPhrase) {
 			slog.LogAttrs(
-				context.Background(), 
-				slog.LevelError, 
-				"request failed with DUPLICATE_URL_PHRASE", 
-				slog.String("destination", request.Url), 
+				context.Background(),
+				slog.LevelError,
+				"request failed with DUPLICATE_URL_PHRASE",
+				slog.String("destination", request.Url),
 				slog.String("short_phrase", shortPhrase),
 			)
 			return createFailResponse[response.SubmitUrl](message.INTERNAL_SYSTEM_ERROR, request.TrackId, code.INTERNAL_SYSTEM_ERROR)
 		}
 
 		slog.LogAttrs(
-			context.Background(), 
-			slog.LevelError, 
+			context.Background(),
+			slog.LevelError,
 			"request failed",
-			slog.String("destination", request.Url), 
+			slog.String("destination", request.Url),
 			slog.String("short_phrase", shortPhrase),
-			slog.Any("error", err.Error()), 
+			slog.Any("error", err.Error()),
 		)
 		return createFailResponse[response.SubmitUrl](message.INTERNAL_SYSTEM_ERROR, request.TrackId, code.INTERNAL_SYSTEM_ERROR)
 	}

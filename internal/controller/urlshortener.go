@@ -23,16 +23,16 @@ func (usc *urlShortener) InitRoutes(api fiber.Router) {
 	api.Post("/submit/", usc.submitUrl)
 }
 
-func (usc *urlShortener) GetPrefix() string { return "/v1/url"}
+func (usc *urlShortener) GetPrefix() string { return "/v1/url" }
 
 func (usc *urlShortener) submitUrl(c *fiber.Ctx) error {
 	var body request.SubmitUrl
 	body.TrackId = c.GetRespHeader(fiber.HeaderXRequestID)
 	if err := c.BodyParser(&body); err != nil {
 		slog.LogAttrs(
-			context.Background(), 
-			slog.LevelError, 
-			"error parsing request body", 
+			context.Background(),
+			slog.LevelError,
+			"error parsing request body",
 			slog.Any("error", err.Error()),
 		)
 		return fiber.ErrBadRequest
