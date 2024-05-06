@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+  mysql:
+    image: mysql:8.4.0
+    container_name: urlbook_db_mysql
+    restart: unless-stopped
+    env_file: 
+      - ${PWD}/../.env
+    environment:
+      MYSQL_DATABASE: ${DATABASE_NAME}
+      MYSQL_USER: ${DATABASE_USER}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD}
+      MYSQL_ROOT_PASSWORD: 'CHANGEME!'
+    volumes:
+      - mysql_db:/var/lib/mysql
+    expose:
+      - 3306:3306
+    ports:
+      - ${DATABASE_PUBLIC_PORT}:3306
+
+volumes:
+  mysql_db:
