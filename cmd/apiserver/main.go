@@ -28,6 +28,7 @@ const (
 	DATABASE_USER        string = "DATABASE_USER"
 	DATABASE_PASSWORD    string = "DATABASE_PASSWORD"
 	DATABASE_PUBLIC_PORT string = "DATABASE_PUBLIC_PORT"
+	MEMCACHED_ADDRESS    string = "MEMCACHED_ADDRESS"
 	PUBLIC_ADDRESS       string = "PUBLIC_ADDRESS"
 	CUSTOM_ENV_FILE      string = "ENV_FILE"
 )
@@ -54,16 +55,20 @@ func main() {
 		slog.Error(err.Error())
 	}
 
-	dbConnection := config.NewMysqlDBConfig(
+	dbConnection := config.NewMysqlDBConn(
 		getValueFromEnv(DATABASE_USER),
 		getValueFromEnv(DATABASE_PASSWORD),
 		getValueFromEnv(DATABASE_HOST),
 		getValueFromEnv(DATABASE_PUBLIC_PORT),
 		getValueFromEnv(DATABASE_NAME),
 	)
+	memcachedClient := config.NewMemcachedClient(getValueFromEnv(MEMCACHED_ADDRESS))
+
+	memcachedRepository :=  repository.NewMemcachedRepository(memcachedClient)
 	urlRepository := repository.NewUrlRepository(dbConnection)
 	urlShortenerService := service.NewUrlShortener(
 		urlRepository,
+		memcachedRepository,
 		tryGetValueFromEnv(PUBLIC_ADDRESS, ""),
 	)
 

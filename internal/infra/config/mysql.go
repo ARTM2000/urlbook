@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func NewMysqlDBConfig(username, password, host, port, dbName string) *gorm.DB {
+func NewMysqlDBConn(username, password, host, port, dbName string) *gorm.DB {
 	db, err := gorm.Open(
 		mysql.New(mysql.Config{
 			DSN: fmt.Sprintf(

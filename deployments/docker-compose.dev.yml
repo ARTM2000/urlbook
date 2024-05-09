@@ -17,6 +17,13 @@ services:
     networks:
       - urlbook_net
 
+  memcached:
+    image: memcached:1.6
+    container_name: urlbook_memcached
+    restart: unless-stopped
+    ports:
+      - ${MEMCACHED_PUBLIC_PORT}:11211
+
   # urlbook:
   #   image: urlbook:development
   #   build:
