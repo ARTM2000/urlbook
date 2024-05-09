@@ -15,7 +15,7 @@ import (
 type url struct {
 	ID          uint64    `gorm:"primaryKey;not null" json:"id"`
 	ShortPhrase string    `gorm:"type:string;not null;unique" json:"short_phrase"`
-	Destination string    `gorm:"type:varchar(512);not null;unique" json:"destination"`
+	Destination string    `gorm:"type:varchar(512);not null" json:"destination"`
 	CreatedAt   time.Time `gorm:"autoCreateTime:milli;not null" json:"created_at"`
 }
 

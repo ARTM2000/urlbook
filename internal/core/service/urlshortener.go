@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log/slog"
 
+	"github.com/artm2000/urlbook/internal/core/common"
 	"github.com/artm2000/urlbook/internal/core/dto"
 	"github.com/artm2000/urlbook/internal/core/entity/code"
 	"github.com/artm2000/urlbook/internal/core/entity/message"
@@ -67,7 +68,13 @@ func (ush *urlShortener) ShortUrl(request *request.SubmitUrl) *response.Response
 }
 
 func (ush *urlShortener) generateShortUrlPhrase(destination string) string {
-	shortPhrase := "shorted"
+	shortPhrase := common.GetRandomUrlShortPhrase()
+	sameUrl, _ := ush.urlRepo.FindUrlByShortPhrase(shortPhrase)
+	for sameUrl != nil {
+		shortPhrase = common.GetRandomUrlShortPhrase()
+		sameUrl, _ = ush.urlRepo.FindUrlByShortPhrase(shortPhrase)
+	}
+
 	slog.Debug("generate short url phrase", "destination", destination, "short_phrase", shortPhrase)
 	return shortPhrase
 }
