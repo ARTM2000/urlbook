@@ -13,3 +13,7 @@ type Response[T any] struct {
 type SubmitUrl struct {
 	ShortUrl string `json:"short_url"`
 }
+
+type GetUrlFromPhrase struct {
+	DestinationUrl string
+}

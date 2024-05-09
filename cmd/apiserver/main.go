@@ -55,15 +55,15 @@ func main() {
 	}
 
 	dbConnection := config.NewMysqlDBConfig(
-		getValueFromEnv(DATABASE_USER), 
-		getValueFromEnv(DATABASE_PASSWORD), 
-		getValueFromEnv(DATABASE_HOST), 
+		getValueFromEnv(DATABASE_USER),
+		getValueFromEnv(DATABASE_PASSWORD),
+		getValueFromEnv(DATABASE_HOST),
 		getValueFromEnv(DATABASE_PUBLIC_PORT),
 		getValueFromEnv(DATABASE_NAME),
 	)
 	urlRepository := repository.NewUrlRepository(dbConnection)
 	urlShortenerService := service.NewUrlShortener(
-		urlRepository, 
+		urlRepository,
 		tryGetValueFromEnv(PUBLIC_ADDRESS, ""),
 	)
 
@@ -74,6 +74,9 @@ func main() {
 	h.Start()
 	h.RegisterControllers(
 		controller.NewUrlShortener(
+			urlShortenerService,
+		),
+		controller.NewUrlRedirect(
 			urlShortenerService,
 		),
 	)

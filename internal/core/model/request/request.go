@@ -8,3 +8,8 @@ type SubmitUrl struct {
 	request
 	Url string `json:"url" validate:"required,http_url"`
 }
+
+type RedirectToDestination struct {
+	request
+	ShortPhrase string `params:"urlRedirect" validate:"required"`
+}

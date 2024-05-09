@@ -175,7 +175,7 @@ type validationError struct {
 type CustomMessageMapper = func(tag string, field string, param string, info ...string) (string, bool)
 
 type superValidator struct {
-	validate *validator.Validate
+	validate      *validator.Validate
 	messageMapper CustomMessageMapper
 }
 

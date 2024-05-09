@@ -67,6 +67,36 @@ func (ush *urlShortener) ShortUrl(request *request.SubmitUrl) *response.Response
 	return createSuccessResponse(&submitUrlRes, request.TrackId)
 }
 
+func (ush *urlShortener) GetDestinationFromShortPhrase(request *request.RedirectToDestination) *response.Response[response.GetUrlFromPhrase] {
+	// Todo: use cache in first search, in case of no value go for querying database
+	url, err := ush.urlRepo.FindUrlByShortPhrase(request.ShortPhrase)
+	if err != nil {
+		if errors.Is(err, repository.ErrNotFoundUrlPhrase) {
+			slog.LogAttrs(
+				context.Background(),
+				slog.LevelError,
+				"request failed with ErrNotFoundUrlPhrase",
+				slog.String("short_phrase", request.ShortPhrase),
+			)
+			return createFailResponse[response.GetUrlFromPhrase](message.NOT_FOUND_URL, request.TrackId, code.NOT_FOUND)
+		}
+
+		slog.LogAttrs(
+			context.Background(),
+			slog.LevelError,
+			"request failed",
+			slog.String("short_phrase", request.ShortPhrase),
+			slog.Any("error", err.Error()),
+		)
+		return createFailResponse[response.GetUrlFromPhrase](message.INTERNAL_SYSTEM_ERROR, request.TrackId, code.INTERNAL_SYSTEM_ERROR)
+	}
+
+	getUrlFromPhrase := response.GetUrlFromPhrase{
+		DestinationUrl: url.Destination,
+	}
+	return createSuccessResponse(&getUrlFromPhrase, request.TrackId)
+}
+
 func (ush *urlShortener) generateShortUrlPhrase(destination string) string {
 	shortPhrase := common.GetRandomUrlShortPhrase()
 	sameUrl, _ := ush.urlRepo.FindUrlByShortPhrase(shortPhrase)

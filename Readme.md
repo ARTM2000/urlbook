@@ -34,7 +34,7 @@ Here are some links about the architecture:
   - [x] Database (mysql)
   - [ ] Cache (memcached)
 - [x] Only submit a url and get a system generated short url
-- [ ] Redirect the system generated short-url to its original url with 302 HTTP status code
+- [x] Redirect the system generated short-url to its original url with 302 HTTP status code
 - [ ] Submit a url with custom name for shortening
 - [ ] Bring caching mechanism
 - [ ] Add configurable cache update job

@@ -41,9 +41,9 @@ func (usc *urlShortener) submitUrl(c *fiber.Ctx) error {
 
 	if errs, ok := common.GetValidator().ValidateStruct(&body); !ok {
 		slog.LogAttrs(
-			context.Background(), 
-			slog.LevelError, 
-			"validation error", 
+			context.Background(),
+			slog.LevelError,
+			"validation error",
 			slog.String("error", errs[0].Message),
 		)
 		return fiber.NewError(fiber.StatusUnprocessableEntity, errs[0].Message)
