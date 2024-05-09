@@ -6,5 +6,5 @@ type request struct {
 
 type SubmitUrl struct {
 	request
-	Url string `json:"url" validate:""`
+	Url string `json:"url" validate:"required,http_url"`
 }

@@ -15,7 +15,7 @@ import (
 type urlSchema struct {
 	ID          uint64    `gorm:"primaryKey;not null" json:"id"`
 	ShortPhrase string    `gorm:"type:string;not null;unique" json:"short_phrase"`
-	Destination string    `gorm:"type:text;not null;unique" json:"destination"`
+	Destination string    `gorm:"type:varchar(512);not null;unique" json:"destination"`
 	CreatedAt   time.Time `gorm:"autoCreateTime:milli;not null" json:"created_at"`
 }
 
@@ -25,7 +25,7 @@ type urlRepository struct {
 
 func NewUrlRepository(db *gorm.DB) repository.Url {
 	// todo: consider better place
-	// db.AutoMigrate(&urlSchema{})
+	db.AutoMigrate(&urlSchema{})
 
 	return &urlRepository{
 		db,

@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log/slog"
 	"os"
 
@@ -19,10 +20,17 @@ import (
 /**
  * env keys
  */
-const SERVER_HOST_KEY string = "SERVER_HOST"
-const SERVER_PORT_KEY string = "SERVER_PORT"
-const PUBLIC_ADDRESS = "PUBLIC_ADDRESS"
-const CUSTOM_ENV_FILE string = "ENV_FILE"
+const (
+	SERVER_HOST_KEY      string = "SERVER_HOST"
+	SERVER_PORT_KEY      string = "SERVER_PORT"
+	DATABASE_HOST        string = "DATABASE_HOST"
+	DATABASE_NAME        string = "DATABASE_NAME"
+	DATABASE_USER        string = "DATABASE_USER"
+	DATABASE_PASSWORD    string = "DATABASE_PASSWORD"
+	DATABASE_PUBLIC_PORT string = "DATABASE_PUBLIC_PORT"
+	PUBLIC_ADDRESS       string = "PUBLIC_ADDRESS"
+	CUSTOM_ENV_FILE      string = "ENV_FILE"
+)
 
 const CUSTOM_ENV_FILE_FLAG string = "envfile"
 
@@ -46,29 +54,45 @@ func main() {
 		slog.Error(err.Error())
 	}
 
+	dbConnection := config.NewMysqlDBConfig(
+		getValueFromEnv(DATABASE_USER), 
+		getValueFromEnv(DATABASE_PASSWORD), 
+		getValueFromEnv(DATABASE_HOST), 
+		getValueFromEnv(DATABASE_PUBLIC_PORT),
+		getValueFromEnv(DATABASE_NAME),
+	)
+	urlRepository := repository.NewUrlRepository(dbConnection)
+	urlShortenerService := service.NewUrlShortener(
+		urlRepository, 
+		tryGetValueFromEnv(PUBLIC_ADDRESS, ""),
+	)
+
 	h := server.NewHttpServer(config.HttpServer{
-		Host: getValueFromEnv(SERVER_HOST_KEY, "127.0.0.1"),
-		Port: getValueFromEnv(SERVER_PORT_KEY, "3000"),
+		Host: tryGetValueFromEnv(SERVER_HOST_KEY, "127.0.0.1"),
+		Port: tryGetValueFromEnv(SERVER_PORT_KEY, "3000"),
 	})
 	h.Start()
 	h.RegisterControllers(
 		controller.NewUrlShortener(
-			service.NewUrlShortener(
-				repository.NewUrlRepository(
-					config.NewMysqlDBConfig("username", "password", "host", "port", "dbname"),
-				),
-				getValueFromEnv(PUBLIC_ADDRESS, ""),
-			),
+			urlShortenerService,
 		),
 	)
 
 	pkg.OnInterrupt(func() { h.Stop(true) })
 }
 
-func getValueFromEnv(key, defaultValue string) string {
+func tryGetValueFromEnv(key, defaultValue string) string {
 	value, valueExist := os.LookupEnv(key)
 	if !valueExist {
 		return defaultValue
+	}
+	return value
+}
+
+func getValueFromEnv(key string) string {
+	value, valueExist := os.LookupEnv(key)
+	if !valueExist {
+		panic(fmt.Sprintf("fail to get '%s' from environment variables", key))
 	}
 	return value
 }
