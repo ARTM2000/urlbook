@@ -30,10 +30,10 @@ Here are some links about the architecture:
 
 ## Todo
 - [x] Create project system design
-- [ ] Setup required services with docker-compose
-  - [ ] Database (mysql)
+- [x] Setup required services with docker-compose
+  - [x] Database (mysql)
   - [ ] Cache (memcached)
-- [ ] Only submit a url and get a system generated short url
+- [x] Only submit a url and get a system generated short url
 - [ ] Redirect the system generated short-url to its original url with 302 HTTP status code
 - [ ] Submit a url with custom name for shortening
 - [ ] Bring caching mechanism
