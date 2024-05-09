@@ -1,0 +1,12 @@
+FROM golang:1.22.2 AS build
+WORKDIR /app
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -o /urlbook /app/cmd/apiserver/main.go
+
+FROM scratch
+ARG PORT
+EXPOSE ${PORT}
+COPY --from=build /urlbook /urlbook
+CMD [ "/urlbook" ]

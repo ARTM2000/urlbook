@@ -1,23 +1,42 @@
-version: '3.9'
-
 services:
   mysql:
     image: mysql:8.4.0
     container_name: urlbook_db_mysql
     restart: unless-stopped
-    env_file: 
-      - ${PWD}/../.env
     environment:
-      MYSQL_DATABASE: ${DATABASE_NAME}
-      MYSQL_USER: ${DATABASE_USER}
-      MYSQL_PASSWORD: ${DATABASE_PASSWORD}
-      MYSQL_ROOT_PASSWORD: 'CHANGEME!'
+      - MYSQL_DATABASE=${DATABASE_NAME}
+      - MYSQL_USER=${DATABASE_USER}
+      - MYSQL_PASSWORD=${DATABASE_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=CHANGEME!
     volumes:
       - mysql_db:/var/lib/mysql
     expose:
       - 3306:3306
     ports:
       - ${DATABASE_PUBLIC_PORT}:3306
+    networks:
+      - urlbook_net
+
+  # urlbook:
+  #   image: urlbook:development
+  #   build:
+  #     dockerfile: ./deployments/dockerfiles/Dockerfile.apiserver
+  #     context: ${PWD}
+  #     network: host
+  #     args:
+  #       - PORT=${SERVER_PORT}
+  #   depends_on:
+  #     - mysql
+  #   env_file:
+  #     - ${PWD}/.env
+  #   ports:
+  #     # Todo: differentiate between public and private port
+  #     - ${SERVER_PORT}:${SERVER_PORT}
+  #   networks:
+  #     - urlbook_net
 
 volumes:
   mysql_db:
+
+networks:
+  urlbook_net:

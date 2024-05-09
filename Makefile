@@ -8,3 +8,7 @@ format:
 
 prepare:
 	@./scripts/prepare.bash
+
+compose_dev:
+	@if [ ! -f .env ]; then make prepare; fi
+	@docker-compose -f ${PWD}/deployments/docker-compose.dev.yml --env-file ${PWD}/.env up
