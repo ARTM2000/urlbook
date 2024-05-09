@@ -3,9 +3,9 @@ package repository
 import "errors"
 
 var (
-	ErrCacheMissed  = errors.New("ErrCacheMissed")
-	ErrCacheServerFault  = errors.New("ErrCacheServerFault")
-	ErrMalformedKey = errors.New("ErrMalformedKey")
+	ErrCacheMissed      = errors.New("ErrCacheMissed")
+	ErrCacheServerFault = errors.New("ErrCacheServerFault")
+	ErrMalformedKey     = errors.New("ErrMalformedKey")
 )
 
 type Cache interface {

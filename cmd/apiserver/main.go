@@ -64,7 +64,7 @@ func main() {
 	)
 	memcachedClient := config.NewMemcachedClient(getValueFromEnv(MEMCACHED_ADDRESS))
 
-	memcachedRepository :=  repository.NewMemcachedRepository(memcachedClient)
+	memcachedRepository := repository.NewMemcachedRepository(memcachedClient)
 	urlRepository := repository.NewUrlRepository(dbConnection)
 	urlShortenerService := service.NewUrlShortener(
 		urlRepository,

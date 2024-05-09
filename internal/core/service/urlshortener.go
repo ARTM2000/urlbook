@@ -62,13 +62,13 @@ func (ush *urlShortener) ShortUrl(request *request.SubmitUrl) *response.Response
 		)
 		return createFailResponse[response.SubmitUrl](message.INTERNAL_SYSTEM_ERROR, request.TrackId, code.INTERNAL_SYSTEM_ERROR)
 	}
-	
+
 	go func() {
 		err := ush.cacheRepo.Set(fmt.Sprintf("url:%s", shortPhrase), []byte(request.Url))
 		slog.LogAttrs(
-			ctx, 
-			slog.LevelDebug, 
-			"set short url cache", 
+			ctx,
+			slog.LevelDebug,
+			"set short url cache",
 			slog.String("short_phrase", shortPhrase),
 			slog.String("destination", request.Url),
 			slog.Any("error", err),

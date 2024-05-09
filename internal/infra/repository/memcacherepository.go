@@ -33,14 +33,14 @@ func (mr *memcachedRepository) Get(key string) ([]byte, error) {
 
 func (mr *memcachedRepository) Set(key string, value []byte) error {
 	item := memcache.Item{
-		Key: key,
+		Key:   key,
 		Value: value,
 	}
 	if err := mr.memcachedClient.Set(&item); err != nil {
 		slog.Debug(err.Error())
 		return repository.ErrCacheServerFault
 	}
-	
+
 	return nil
 }
 
