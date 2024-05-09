@@ -4,6 +4,7 @@ import (
 	"context"
 	"log/slog"
 
+	"github.com/artm2000/urlbook/internal/core/common"
 	"github.com/artm2000/urlbook/internal/core/model/request"
 	"github.com/artm2000/urlbook/internal/core/port/service"
 	"github.com/gofiber/fiber/v2"
@@ -38,12 +39,16 @@ func (usc *urlShortener) submitUrl(c *fiber.Ctx) error {
 		return fiber.ErrBadRequest
 	}
 
+	if errs, ok := common.GetValidator().ValidateStruct(&body); !ok {
+		slog.LogAttrs(
+			context.Background(), 
+			slog.LevelError, 
+			"validation error", 
+			slog.String("error", errs[0].Message),
+		)
+		return fiber.NewError(fiber.StatusUnprocessableEntity, errs[0].Message)
+	}
+
 	result := usc.urlShortenerService.ShortUrl(&body)
-	slog.LogAttrs(
-		context.Background(),
-		slog.LevelDebug,
-		"submit-url response",
-		slog.Any("result", result),
-	)
 	return c.Status(result.StatusCode).JSON(result)
 }

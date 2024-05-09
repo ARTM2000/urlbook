@@ -12,7 +12,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type urlSchema struct {
+type url struct {
 	ID          uint64    `gorm:"primaryKey;not null" json:"id"`
 	ShortPhrase string    `gorm:"type:string;not null;unique" json:"short_phrase"`
 	Destination string    `gorm:"type:varchar(512);not null;unique" json:"destination"`
@@ -25,7 +25,7 @@ type urlRepository struct {
 
 func NewUrlRepository(db *gorm.DB) repository.Url {
 	// todo: consider better place
-	db.AutoMigrate(&urlSchema{})
+	db.AutoMigrate(&url{})
 
 	return &urlRepository{
 		db,
@@ -39,11 +39,11 @@ func (ur *urlRepository) Insert(newUrl *dto.URL) error {
 		return repository.ErrDuplicateUrlPhrase
 	}
 
-	newUrlModel := urlSchema{
+	newUrlModel := url{
 		ShortPhrase: newUrl.ShortPhrase,
 		Destination: newUrl.Destination,
 	}
-	dbResult := ur.db.Model(&urlSchema{}).Create(&newUrlModel)
+	dbResult := ur.db.Model(&url{}).Create(&newUrlModel)
 	if dbResult.Error != nil {
 		if errors.Is(dbResult.Error, gorm.ErrRecordNotFound) {
 			slog.LogAttrs(
@@ -69,8 +69,8 @@ func (ur *urlRepository) Insert(newUrl *dto.URL) error {
 }
 
 func (ur *urlRepository) FindUrlByShortPhrase(shortPhrase string) (*dto.URL, error) {
-	var foundUrl urlSchema
-	dbResult := ur.db.Model(&urlSchema{}).Where(urlSchema{ShortPhrase: shortPhrase}).First(&foundUrl)
+	var foundUrl url
+	dbResult := ur.db.Model(&url{}).Where(url{ShortPhrase: shortPhrase}).First(&foundUrl)
 	if dbResult.Error != nil {
 		if errors.Is(dbResult.Error, gorm.ErrRecordNotFound) {
 			slog.LogAttrs(
