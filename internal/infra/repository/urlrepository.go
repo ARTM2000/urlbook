@@ -33,26 +33,20 @@ func NewUrlRepository(db *gorm.DB) repository.Url {
 }
 
 func (ur *urlRepository) Insert(newUrl *dto.URL) error {
-	_, err := ur.FindUrlByShortPhrase(newUrl.ShortPhrase)
-	if err == nil {
-		slog.Error(fmt.Sprintf("duplicate url phrase %s", newUrl.ShortPhrase))
-		return repository.ErrDuplicateUrlPhrase
-	}
-
 	newUrlModel := url{
 		ShortPhrase: newUrl.ShortPhrase,
 		Destination: newUrl.Destination,
 	}
 	dbResult := ur.db.Model(&url{}).Create(&newUrlModel)
 	if dbResult.Error != nil {
-		if errors.Is(dbResult.Error, gorm.ErrRecordNotFound) {
+		if errors.Is(dbResult.Error, gorm.ErrDuplicatedKey) {
 			slog.LogAttrs(
 				context.Background(),
 				slog.LevelDebug,
 				fmt.Sprintf("no url found by short phrase %s", newUrlModel.ShortPhrase),
 				slog.String("short_phrase", newUrlModel.ShortPhrase),
 			)
-			return repository.ErrNotFoundUrlPhrase
+			return repository.ErrDuplicateUrlPhrase
 		}
 
 		slog.LogAttrs(
