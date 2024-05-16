@@ -27,6 +27,7 @@ As considered, _Hexagonal Architecture_ selected for project structure to make t
 Here are some links about the architecture:
  - https://medium.com/@pthtantai97/hexagonal-architecture-with-golang-part-1-7f82a364b29 
  - https://medium.com/@pthtantai97/hexagonal-architecture-with-golang-part-2-681ee2a0d780
+ - https://herbertograca.com/2017/11/16/explicit-architecture-01-ddd-hexagonal-onion-clean-cqrs-how-i-put-it-all-together/
 
 ## Todo
 - [x] Create project system design
