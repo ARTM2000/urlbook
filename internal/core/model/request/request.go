@@ -9,6 +9,11 @@ type SubmitUrl struct {
 	Url string `json:"url" validate:"required,http_url"`
 }
 
+type SubmitUrlByCustomPhrase struct {
+	SubmitUrl
+	Phrase string `json:"phrase" validate:"required,alphanum,max=16"`
+}
+
 type RedirectToDestination struct {
 	request
 	ShortPhrase string `params:"urlRedirect" validate:"required"`

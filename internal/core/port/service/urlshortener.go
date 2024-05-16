@@ -7,5 +7,6 @@ import (
 
 type UrlShortener interface {
 	ShortUrl(request *request.SubmitUrl) *response.Response[response.SubmitUrl]
+	ShortUrlByCustomPhrase(request *request.SubmitUrlByCustomPhrase) *response.Response[response.SubmitUrl]
 	GetDestinationFromShortPhrase(request *request.RedirectToDestination) *response.Response[response.GetUrlFromPhrase]
 }

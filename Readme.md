@@ -35,7 +35,7 @@ Here are some links about the architecture:
   - [x] Cache (memcached)
 - [x] Only submit a url and get a system generated short url
 - [x] Redirect the system generated short-url to its original url with 302 HTTP status code
-- [ ] Submit a url with custom name for shortening
+- [x] Submit a url with custom name for shortening
 - [x] Bring caching mechanism
 - [ ] Add configurable cache update job
 - [ ] Add some tracking mechanism on urls

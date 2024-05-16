@@ -81,6 +81,65 @@ func (ush *urlShortener) ShortUrl(request *request.SubmitUrl) *response.Response
 	return createSuccessResponse(&submitUrlRes, request.TrackId)
 }
 
+func (ush *urlShortener) ShortUrlByCustomPhrase(request *request.SubmitUrlByCustomPhrase) *response.Response[response.SubmitUrl] {
+	ctx := context.Background()
+
+	if _, err := ush.urlRepo.FindUrlByShortPhrase(request.Phrase); err == nil {
+		// in this case, there is a same short-phrase existing for a url
+		slog.LogAttrs(
+			ctx,
+			slog.LevelError,
+			"there is a existing short-phrase for this custom short-phrase",
+			slog.String("short_phrase", request.Phrase),
+		)
+		return createFailResponse[response.SubmitUrl](message.DUPLICATE_SHORT_PHRASE, request.TrackId, code.CONFLICT)
+	}
+
+	urlDto := dto.URL{
+		ShortPhrase: request.Phrase,
+		Destination: request.Url,
+	}
+	if err := ush.urlRepo.Insert(&urlDto); err != nil {
+		if errors.Is(err, repository.ErrDuplicateUrlPhrase) {
+			slog.LogAttrs(
+				ctx,
+				slog.LevelError,
+				"request failed with DUPLICATE_URL_PHRASE",
+				slog.String("destination", request.Url),
+				slog.String("short_phrase", request.Phrase),
+			)
+			return createFailResponse[response.SubmitUrl](message.INTERNAL_SYSTEM_ERROR, request.TrackId, code.INTERNAL_SYSTEM_ERROR)
+		}
+
+		slog.LogAttrs(
+			ctx,
+			slog.LevelError,
+			"request failed",
+			slog.String("destination", request.Url),
+			slog.String("short_phrase", request.Phrase),
+			slog.Any("error", err.Error()),
+		)
+		return createFailResponse[response.SubmitUrl](message.INTERNAL_SYSTEM_ERROR, request.TrackId, code.INTERNAL_SYSTEM_ERROR)
+	}
+
+	go func() {
+		err := ush.cacheRepo.Set(fmt.Sprintf("url:%s", request.Phrase), []byte(request.Url), repository.UrlDefaultCacheTTL)
+		slog.LogAttrs(
+			ctx,
+			slog.LevelDebug,
+			"set short url cache",
+			slog.String("short_phrase", request.Phrase),
+			slog.String("destination", request.Url),
+			slog.Any("error", err),
+		)
+	}()
+
+	submitUrlRes := response.SubmitUrl{
+		ShortUrl: ush.createFullShortUrl(request.Phrase),
+	}
+	return createSuccessResponse(&submitUrlRes, request.TrackId)
+}
+
 func (ush *urlShortener) GetDestinationFromShortPhrase(request *request.RedirectToDestination) *response.Response[response.GetUrlFromPhrase] {
 	// First, try to get destination from cache
 	if dest, _ := ush.cacheRepo.Get(fmt.Sprintf("url:%s", request.ShortPhrase)); dest != nil {
