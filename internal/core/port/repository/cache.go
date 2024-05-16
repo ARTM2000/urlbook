@@ -12,7 +12,7 @@ var (
 )
 
 const (
-	UrlDefaultCacheTTL = time.Minute * 15
+	UrlDefaultCacheTTL = time.Hour * 3
 )
 
 type Cache interface {
