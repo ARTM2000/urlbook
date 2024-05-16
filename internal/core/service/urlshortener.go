@@ -141,6 +141,8 @@ func (ush *urlShortener) ShortUrlByCustomPhrase(request *request.SubmitUrlByCust
 }
 
 func (ush *urlShortener) GetDestinationFromShortPhrase(request *request.RedirectToDestination) *response.Response[response.GetUrlFromPhrase] {
+	ctx := context.Background()
+
 	// First, try to get destination from cache
 	if dest, _ := ush.cacheRepo.Get(fmt.Sprintf("url:%s", request.ShortPhrase)); dest != nil {
 		slog.Debug("got destination from cache", "short_phrase", request.ShortPhrase, "destination", string(dest))
@@ -154,7 +156,7 @@ func (ush *urlShortener) GetDestinationFromShortPhrase(request *request.Redirect
 	if err != nil {
 		if errors.Is(err, repository.ErrNotFoundUrlPhrase) {
 			slog.LogAttrs(
-				context.Background(),
+				ctx,
 				slog.LevelError,
 				"request failed with ErrNotFoundUrlPhrase",
 				slog.String("short_phrase", request.ShortPhrase),
@@ -163,7 +165,7 @@ func (ush *urlShortener) GetDestinationFromShortPhrase(request *request.Redirect
 		}
 
 		slog.LogAttrs(
-			context.Background(),
+			ctx,
 			slog.LevelError,
 			"request failed",
 			slog.String("short_phrase", request.ShortPhrase),
@@ -171,6 +173,18 @@ func (ush *urlShortener) GetDestinationFromShortPhrase(request *request.Redirect
 		)
 		return createFailResponse[response.GetUrlFromPhrase](message.INTERNAL_SYSTEM_ERROR, request.TrackId, code.INTERNAL_SYSTEM_ERROR)
 	}
+
+	go func() {
+		err := ush.cacheRepo.Set(fmt.Sprintf("url:%s", request.ShortPhrase), []byte(url.Destination), repository.UrlDefaultCacheTTL)
+		slog.LogAttrs(
+			ctx,
+			slog.LevelDebug,
+			"set short url cache",
+			slog.String("short_phrase", request.ShortPhrase),
+			slog.String("destination", url.Destination),
+			slog.Any("error", err),
+		)
+	}()
 
 	getUrlFromPhrase := response.GetUrlFromPhrase{
 		DestinationUrl: url.Destination,
