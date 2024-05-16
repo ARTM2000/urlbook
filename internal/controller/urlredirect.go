@@ -36,7 +36,7 @@ func (ur *urlRedirect) redirectUrl(c *fiber.Ctx) error {
 			"error parsing request body",
 			slog.Any("error", err.Error()),
 		)
-		return fiber.ErrBadRequest
+		return fiber.ErrUnprocessableEntity
 	}
 
 	if errs, ok := common.GetValidator().ValidateStruct(&params); !ok {

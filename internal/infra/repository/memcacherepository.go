@@ -3,6 +3,7 @@ package repository
 import (
 	"errors"
 	"log/slog"
+	"time"
 
 	"github.com/artm2000/urlbook/internal/core/port/repository"
 	"github.com/bradfitz/gomemcache/memcache"
@@ -31,10 +32,11 @@ func (mr *memcachedRepository) Get(key string) ([]byte, error) {
 	return item.Value, nil
 }
 
-func (mr *memcachedRepository) Set(key string, value []byte) error {
+func (mr *memcachedRepository) Set(key string, value []byte, ttl time.Duration) error {
 	item := memcache.Item{
 		Key:   key,
 		Value: value,
+		Expiration: int32(ttl.Seconds()),
 	}
 	if err := mr.memcachedClient.Set(&item); err != nil {
 		slog.Debug(err.Error())

@@ -64,7 +64,7 @@ func (ush *urlShortener) ShortUrl(request *request.SubmitUrl) *response.Response
 	}
 
 	go func() {
-		err := ush.cacheRepo.Set(fmt.Sprintf("url:%s", shortPhrase), []byte(request.Url))
+		err := ush.cacheRepo.Set(fmt.Sprintf("url:%s", shortPhrase), []byte(request.Url), repository.UrlDefaultCacheTTL)
 		slog.LogAttrs(
 			ctx,
 			slog.LevelDebug,
