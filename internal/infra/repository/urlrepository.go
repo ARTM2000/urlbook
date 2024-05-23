@@ -92,3 +92,27 @@ func (ur *urlRepository) FindUrlByShortPhrase(shortPhrase string) (*dto.URL, err
 		CreatedAt:   foundUrl.CreatedAt,
 	}, nil
 }
+
+func (ur *urlRepository) FindManyUrlsByTimeScope(from time.Time, to time.Time, size, page int) (*[]dto.URL, error) {
+	var foundUrls []url
+	dbResult := ur.db.Model(&url{}).Where("created_at > ? AND created_at <= ?", from, to).Limit(size).Offset((page - 1) * size).Find(&foundUrls)
+	if dbResult.Error != nil {
+		slog.LogAttrs(
+			context.Background(),
+			slog.LevelError,
+			"unrecognized error on finding urls by short phrase happened",
+			slog.Any("error", dbResult.Error),
+		)
+		return nil, repository.ErrNotRecognized
+	}
+
+	urls := []dto.URL{}
+	for _, u := range foundUrls {
+		urls = append(urls, dto.URL{
+			ShortPhrase: u.ShortPhrase,
+			Destination: u.Destination,
+			CreatedAt: u.CreatedAt,
+		})
+	}
+	return &urls, nil
+}

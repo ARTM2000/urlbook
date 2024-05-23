@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"time"
 
 	"github.com/artm2000/urlbook/internal/core/common"
 	"github.com/artm2000/urlbook/internal/core/dto"
@@ -64,7 +65,7 @@ func (ush *urlShortener) ShortUrl(request *request.SubmitUrl) *response.Response
 	}
 
 	go func() {
-		err := ush.cacheRepo.Set(fmt.Sprintf("url:%s", shortPhrase), []byte(request.Url), repository.UrlDefaultCacheTTL)
+		err := ush.cacheRepo.Set(fmt.Sprintf("url:%s", shortPhrase), []byte(request.Url), repository.NewUrlCacheTTL)
 		slog.LogAttrs(
 			ctx,
 			slog.LevelDebug,
@@ -123,7 +124,7 @@ func (ush *urlShortener) ShortUrlByCustomPhrase(request *request.SubmitUrlByCust
 	}
 
 	go func() {
-		err := ush.cacheRepo.Set(fmt.Sprintf("url:%s", request.Phrase), []byte(request.Url), repository.UrlDefaultCacheTTL)
+		err := ush.cacheRepo.Set(fmt.Sprintf("url:%s", request.Phrase), []byte(request.Url), repository.NewUrlCacheTTL)
 		slog.LogAttrs(
 			ctx,
 			slog.LevelDebug,
@@ -206,4 +207,22 @@ func (ush *urlShortener) generateShortUrlPhrase(destination string) string {
 
 func (ush *urlShortener) createFullShortUrl(phrase string) string {
 	return fmt.Sprintf("%s/%s", ush.baseShortUrl, phrase)
+}
+
+func (ush *urlShortener) GetManyShortUrls(from time.Time, to time.Time, size, page int) (*[]dto.URL, error) {
+	urls, err := ush.urlRepo.FindManyUrlsByTimeScope(from, to, size, page)
+	if err != nil {
+		slog.LogAttrs(
+			context.Background(),
+			slog.LevelError,
+			"error getting many short urls",
+			slog.Time("from", from),
+			slog.Time("to", to),
+			slog.Int("size", size),
+			slog.Int("page", page),
+			slog.Any("error", err),
+		)
+		return nil, errors.New(string(message.INTERNAL_SYSTEM_ERROR))
+	}
+	return urls, nil
 }

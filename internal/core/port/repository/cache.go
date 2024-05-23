@@ -12,6 +12,7 @@ var (
 )
 
 const (
+	NewUrlCacheTTL     = time.Hour * 24 // a day
 	UrlDefaultCacheTTL = time.Hour * 3
 )
 
