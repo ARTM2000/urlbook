@@ -39,7 +39,7 @@ func (mr *memcachedRepository) Set(key string, value []byte, ttl time.Duration) 
 		Expiration: int32(ttl.Seconds()),
 	}
 	if err := mr.memcachedClient.Set(&item); err != nil {
-		slog.Debug(err.Error())
+		slog.Error(err.Error())
 		return repository.ErrCacheServerFault
 	}
 
