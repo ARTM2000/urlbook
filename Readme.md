@@ -29,6 +29,32 @@ Here are some links about the architecture:
  - https://medium.com/@pthtantai97/hexagonal-architecture-with-golang-part-2-681ee2a0d780
  - https://herbertograca.com/2017/11/16/explicit-architecture-01-ddd-hexagonal-onion-clean-cqrs-how-i-put-it-all-together/
 
+## How to run the project
+### Setup Running Environment
+1. You at least need to have `docker` and `docker-compose` installed.
+2. Run the following command in the project directory to setup the _environment variable_
+   ```bash
+   make prepare
+   ```
+   or if you don't have `make` installed, run the following
+   ```bash
+   bash ./scripts/prepare.bash
+   ```
+### Run the project
+In order to run the project, use this command:
+```bash
+docker-compose -f ./deployments/docker-compose.yml --env-file ./.env up
+```
+
+### Run the project for development
+For running in development mode, you should have  `golang >= 1.21` installed on your machine. After running the previous instruction
+- Use the following to setup the require services
+  ```bash
+  docker-compose -f ./deployments/docker-compose.dev.yml --env-file ./.env up
+  ```
+- To run the project in watch mode, execute the following command: `make dev_server`
+
+
 ## Todo
 - [x] Create project system design
 - [x] Setup required services with docker-compose
@@ -41,10 +67,5 @@ Here are some links about the architecture:
 - [x] Add some tracking mechanism on urls
   - [x] Number of clicks with date
   - [x] The devices used to visit the link
-  - [x] The IP address that clicks happened from
-- [ ] Bring rotate mechanism for redirect-track-data each 3 months
-- [ ] Get report of short url usage
-  - [ ] Use cache mechanism to improve its performance
-  - [ ] Reports time-span should not be more than one month
- 
+  - [x] The IP address that clicks happened from 
 

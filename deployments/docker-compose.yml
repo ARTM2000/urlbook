@@ -24,6 +24,24 @@ services:
     ports:
       - ${MEMCACHED_PUBLIC_PORT}:11211
 
+  urlbook:
+    image: urlbook:latest
+    build:
+      dockerfile: ./deployments/dockerfiles/Dockerfile.apiserver
+      context: ${PWD}
+      network: host
+      args:
+        - PORT=${SERVER_PORT}
+    depends_on:
+      - mysql
+    env_file:
+      - ${PWD}/.env
+    ports:
+      # Todo: differentiate between public and private port
+      - ${SERVER_PORT}:${SERVER_PORT}
+    networks:
+      - urlbook_net
+
 volumes:
   mysql_db:
 
