@@ -38,8 +38,13 @@ Here are some links about the architecture:
 - [x] Redirect the system generated short-url to its original url with 302 HTTP status code
 - [x] Submit a url with custom name for shortening
 - [x] Bring caching mechanism
-- [ ] Add some tracking mechanism on urls
-  - [ ] Number of clicks with date
-  - [ ] The devices used to visit the link
-  - [ ] etc.
+- [x] Add some tracking mechanism on urls
+  - [x] Number of clicks with date
+  - [x] The devices used to visit the link
+  - [x] The IP address that clicks happened from
+- [ ] Bring data tracking rotate mechanism for 3 months
+- [ ] Get report of short url usage
+  - [ ] Use cache mechanism to improve its performance
+  - [ ] Reports time-span should not be more than one month
+ 
 
