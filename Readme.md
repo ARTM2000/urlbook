@@ -42,7 +42,7 @@ Here are some links about the architecture:
   - [x] Number of clicks with date
   - [x] The devices used to visit the link
   - [x] The IP address that clicks happened from
-- [ ] Bring data tracking rotate mechanism for 3 months
+- [ ] Bring rotate mechanism for redirect-track-data each 3 months
 - [ ] Get report of short url usage
   - [ ] Use cache mechanism to improve its performance
   - [ ] Reports time-span should not be more than one month
