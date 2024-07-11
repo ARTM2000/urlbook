@@ -55,6 +55,7 @@ func main() {
 		slog.Error(err.Error())
 	}
 
+	// extra service initiation
 	dbConnection := config.NewMysqlDBConn(
 		getValueFromEnv(DATABASE_USER),
 		getValueFromEnv(DATABASE_PASSWORD),
@@ -64,8 +65,13 @@ func main() {
 	)
 	memcachedClient := config.NewMemcachedClient(getValueFromEnv(MEMCACHED_ADDRESS))
 
+	// infra repository
 	memcachedRepository := repository.NewMemcachedRepository(memcachedClient)
 	urlRepository := repository.NewUrlRepository(dbConnection)
+	urlMetricsRepository := repository.NewUrlMetricsRepository(dbConnection)
+
+	// services
+	urlMetricsService := service.NewUrlMetrics(urlMetricsRepository)
 	urlShortenerService := service.NewUrlShortener(
 		urlRepository,
 		memcachedRepository,
@@ -83,6 +89,7 @@ func main() {
 		),
 		controller.NewUrlRedirect(
 			urlShortenerService,
+			urlMetricsService,
 		),
 	)
 

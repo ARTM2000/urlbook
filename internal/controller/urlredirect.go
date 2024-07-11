@@ -3,8 +3,10 @@ package controller
 import (
 	"context"
 	"log/slog"
+	"time"
 
 	"github.com/artm2000/urlbook/internal/core/common"
+	"github.com/artm2000/urlbook/internal/core/dto"
 	"github.com/artm2000/urlbook/internal/core/model/request"
 	"github.com/artm2000/urlbook/internal/core/port/service"
 	"github.com/gofiber/fiber/v2"
@@ -12,11 +14,13 @@ import (
 
 type urlRedirect struct {
 	urlShortenerService service.UrlShortener
+	urlMetricsService   service.UrlMetrics
 }
 
-func NewUrlRedirect(urlShortenerService service.UrlShortener) HttpController {
+func NewUrlRedirect(urlShortenerService service.UrlShortener, urlMetricsService service.UrlMetrics) HttpController {
 	return &urlRedirect{
 		urlShortenerService,
+		urlMetricsService,
 	}
 }
 
@@ -51,5 +55,13 @@ func (ur *urlRedirect) redirectUrl(c *fiber.Ctx) error {
 
 	result := ur.urlShortenerService.GetDestinationFromShortPhrase(&params)
 	slog.Debug("redirecting to ...", "short_phrase", params.ShortPhrase, "destination", result.Data.DestinationUrl)
+
+	go ur.urlMetricsService.SubmitEvent(&dto.RedirectMetrics{
+		ShortPhrase: params.ShortPhrase,
+		UserAgent: c.GetReqHeaders()[fiber.HeaderUserAgent][0],
+		IP: c.IP(),
+		Time: time.Now(),
+	})
+
 	return c.Status(fiber.StatusTemporaryRedirect).Redirect(result.Data.DestinationUrl)
 }
