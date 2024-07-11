@@ -52,6 +52,10 @@ func (um *urlMetrics) batchSubmitEvents() error {
 	um.mu.Lock()
 	defer um.mu.Unlock()
 
+	if len(um.events) == 0 {
+		return nil
+	}
+	
 	err := um.urlMetricsRepository.BatchInsertEvents(um.events)
 	if err == nil {
 		// in case that we don't have any error, clean the slice
