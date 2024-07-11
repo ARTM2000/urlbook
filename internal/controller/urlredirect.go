@@ -54,6 +54,10 @@ func (ur *urlRedirect) redirectUrl(c *fiber.Ctx) error {
 	}
 
 	result := ur.urlShortenerService.GetDestinationFromShortPhrase(&params)
+	if result.Data == nil {
+		slog.Debug("url not found", slog.Any("result", result))
+		return c.Status(fiber.StatusNotFound).JSON(result)
+	}
 	slog.Debug("redirecting to ...", "short_phrase", params.ShortPhrase, "destination", result.Data.DestinationUrl)
 
 	redirectMetric := &dto.RedirectMetrics{
