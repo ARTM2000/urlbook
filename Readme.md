@@ -1,5 +1,17 @@
 # URLBook
-__URLBook__ is a sample project of URL-shortener platform with focus on backend side. 
+__URLBook__ is a sample project of URL-shortener platform with focus on backend side.
+
+- [URLBook](#urlbook)
+  - [System design](#system-design)
+    - [Functional requirement](#functional-requirement)
+    - [Non-Functional requirement](#non-functional-requirement)
+    - [High-level Design Diagram](#high-level-design-diagram)
+  - [Project architecture](#project-architecture)
+  - [How to run the project](#how-to-run-the-project)
+    - [Setup Running Environment](#setup-running-environment)
+    - [Run the project](#run-the-project)
+    - [Run the project for development](#run-the-project-for-development)
+  - [Milestones](#milestones)
 
 ## System design
 ### Functional requirement
@@ -55,7 +67,7 @@ For running in development mode, you should have  `golang >= 1.21` installed on 
 - To run the project in watch mode, execute the following command: `make dev_server`
 
 
-## Todo
+## Milestones
 - [x] Create project system design
 - [x] Setup required services with docker-compose
   - [x] Database (mysql)
