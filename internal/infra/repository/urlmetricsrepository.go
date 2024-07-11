@@ -52,3 +52,29 @@ func (umr *urlMetricsRepository) InsertEvent(event *dto.RedirectMetrics) error {
 
 	return nil
 }
+
+func (umr *urlMetricsRepository) BatchInsertEvents(events []*dto.RedirectMetrics) error {
+	ums := []urlMetrics{}
+	for _, e := range events {
+		ums = append(ums, urlMetrics{
+			ShortPhrase: e.ShortPhrase,
+			UserAgent: e.UserAgent,
+			IP: e.IP,
+			CreatedAt: e.Time,
+		})
+	}
+	
+	dbResult := umr.db.Model(&urlMetrics{}).Create(&ums)
+	if dbResult.Error != nil {
+		slog.LogAttrs(
+			context.Background(),
+			slog.LevelError,
+			"unrecognized error on insert new url happened",
+			slog.Any("error", dbResult.Error),
+			slog.Any("events", events),
+		)
+		return repository.ErrNotRecognized
+	}
+
+	return nil
+}

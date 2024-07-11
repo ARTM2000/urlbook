@@ -56,12 +56,14 @@ func (ur *urlRedirect) redirectUrl(c *fiber.Ctx) error {
 	result := ur.urlShortenerService.GetDestinationFromShortPhrase(&params)
 	slog.Debug("redirecting to ...", "short_phrase", params.ShortPhrase, "destination", result.Data.DestinationUrl)
 
-	go ur.urlMetricsService.SubmitEvent(&dto.RedirectMetrics{
+	redirectMetric := &dto.RedirectMetrics{
 		ShortPhrase: params.ShortPhrase,
 		UserAgent: c.GetReqHeaders()[fiber.HeaderUserAgent][0],
 		IP: c.IP(),
 		Time: time.Now(),
-	})
+	}
+
+	go ur.urlMetricsService.SubmitEvent(redirectMetric)
 
 	return c.Status(fiber.StatusTemporaryRedirect).Redirect(result.Data.DestinationUrl)
 }
