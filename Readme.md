@@ -12,6 +12,7 @@ __URLBook__ is a sample project of URL-shortener platform with focus on backend 
     - [Run the project](#run-the-project)
     - [Run the project for development](#run-the-project-for-development)
   - [Milestones](#milestones)
+  - [Benchmark result](#benchmark-result)
 
 ## System design
 ### Functional requirement
@@ -81,3 +82,44 @@ For running in development mode, you should have  `golang >= 1.21` installed on 
   - [x] The devices used to visit the link
   - [x] The IP address that clicks happened from 
 
+## Benchmark result
+[Apache benchmark (ab)](https://httpd.apache.org/docs/current/programs/ab.html) tool used for benchmarking the project, and how many request per second it can handle.
+
+```txt
+Server Software:        
+Server Hostname:        localhost
+Server Port:            3000
+
+Document Path:          /L4ryUrj
+Document Length:        0 bytes
+
+Concurrency Level:      80
+Time taken for tests:   2.510 seconds
+Complete requests:      10000
+Failed requests:        0
+Non-2xx responses:      10000
+Total transferred:      6450000 bytes
+HTML transferred:       0 bytes
+Requests per second:    3983.90 [#/sec] (mean)
+Time per request:       20.081 [ms] (mean)
+Time per request:       0.251 [ms] (mean, across all concurrent requests)
+Transfer rate:          2509.39 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    1   1.1      0      26
+Processing:     1   19  12.4     16     100
+Waiting:        1   19  12.4     16     100
+Total:          1   20  12.4     17     101
+
+Percentage of the requests served within a certain time (ms)
+  50%     17
+  66%     21
+  75%     23
+  80%     26
+  90%     35
+  95%     47
+  98%     59
+  99%     67
+ 100%    101 (longest request)
+```
