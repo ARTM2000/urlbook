@@ -11,4 +11,8 @@ prepare:
 
 compose_dev:
 	@if [ ! -f .env ]; then make prepare; fi
-	@docker-compose -f ${PWD}/deployments/docker-compose.dev.yml --env-file ${PWD}/.env up
+	@docker compose -f ./deployments/docker-compose.dev.yml --env-file ${PWD}/.env up
+
+compose:
+	@if [ ! -f .env ]; then make prepare; fi
+	@docker compose -f ./deployments/docker-compose.yml --env-file ${PWD}/.env up
