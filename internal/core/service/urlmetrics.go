@@ -24,7 +24,7 @@ func NewUrlMetrics(urlMetricsRepository repository.UrlMetrics) service.UrlMetric
 	}
 
 	go func() {
-		tk := time.NewTicker(time.Second * 40)
+		tk := time.NewTicker(time.Millisecond * 40)
 		for {
 			<-tk.C
 			if err := um.batchSubmitEvents(); err != nil {
